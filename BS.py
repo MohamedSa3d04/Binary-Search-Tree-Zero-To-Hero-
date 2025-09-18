@@ -3,6 +3,7 @@ class Node:
         self.value = value
         self.left = None
         self.right = None
+        self.parent = None # Excellent utility for successor finding
 
 class Binary_Search_Tree:
     def __init__(self, root:Node):
@@ -15,12 +16,14 @@ class Binary_Search_Tree:
                     self.insert(root.left, value)
                 else:
                     root.left = Node(value)
+                    root.left.parent = root
 
             else:
                 if root.right:
                     self.insert(root.right, value)
                 else:
                     root.right = Node(value)
+                    root.right.parent = root
     
     def search(self, root, value):
         if root:
@@ -105,7 +108,29 @@ class Binary_Search_Tree:
             return None
         
         return parent.value # Even is our parent if we in the left, or our ancestor's parent if we right 
+
+    ## Soloution for parent link
+    def get_successor_v2(self, root, value):
+        node = self.search(root, value)
+        if node.right:
+            sub_minmun = self.get_minmum(node.right) # Get it's minmun
+            return sub_minmun # Sub-Tree Minmum
         
+        else:
+            child = node
+            parent_node = node.parent
+            while parent_node and parent_node.right == child:
+                child = parent_node
+                parent_node = parent_node.parent
+            
+            if not parent_node:
+                return None
+            
+            return parent_node.value
+
+
+
+  
 
         
 
@@ -124,4 +149,4 @@ for i in range(1, len(values)):
 # bst.get_maximum(bst.root)
 # bst.get_minmum(bst.root)
 
-print(bst.get_successor(bst.root, 32))
+print(bst.get_successor_v2(bst.root, -1))
