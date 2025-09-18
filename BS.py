@@ -67,15 +67,15 @@ class Binary_Search_Tree:
             chain_list.append(current)
 
             # Base Case 2
-            if value == current:
+            if value == current.value:
                 return True
             
-            if value < current:
+            if value < current.value:
                 return get_chain(current.left, value)
             else:
                 return get_chain(current.right, value)
         
-
+        get_chain(root, value)
         if not chain_list:
             return None
         
@@ -92,26 +92,28 @@ class Binary_Search_Tree:
             return sub_minmun
 
         # Now we don't have number bigger than us, Nor the number above us
-        # That's mean that the root's parent is the possible to be least bigger than us
+        # That's mean that the ancestor's parent is the possible to be least bigger than us
         # (Just!!!) of we were in the left of it
 
         parent = chain_list.pop()
         child = node
         while parent and parent.right == child:
             child = parent
-            parent = chain_list.pop()
+            parent = None if not chain_list else chain_list.pop()
         
-        if not parent:
+        if not parent: # Our ancestor is the root
             return None
         
-
+        return parent.value # Even is our parent if we in the left, or our ancestor's parent if we right 
         
 
         
 
+        
 
 
-values = [3, 1, 5, -1, 6, -4]
+
+values = [3, 1, 5, -1, 6, -4, 0]
 bst = Binary_Search_Tree(Node(values[0]))
 for i in range(1, len(values)):
     bst.insert(bst.root, values[i])
@@ -122,4 +124,4 @@ for i in range(1, len(values)):
 # bst.get_maximum(bst.root)
 # bst.get_minmum(bst.root)
 
-print(bst.get_successor(bst.root, 6))
+print(bst.get_successor(bst.root, 32))
