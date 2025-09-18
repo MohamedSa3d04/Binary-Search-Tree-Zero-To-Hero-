@@ -1,3 +1,5 @@
+from collections import deque
+
 class Node:
     def __init__(self, value=None):
         self.value = value
@@ -84,7 +86,7 @@ class Binary_Search_Tree:
         
         node = chain_list.pop()
 
-        if not chain_list:
+        if not chain_list and root.value != value:
             return None
 
         
@@ -129,8 +131,66 @@ class Binary_Search_Tree:
             return parent_node.value
 
 
+    def queries_of_successors(self, queue_nodes:deque):  
+        copy_queue = queue_nodes.copy()
+        lst_successors = []  
+        last_node = None
+        def in_order(current, queue_nodes):
+            if current:
+                if len(queue_nodes) == 0:
+                    return
+                
+                nonlocal last_node
+                in_order(current.left, queue_nodes)
+                if last_node and last_node.value == queue_nodes[0]:
+                    queue_nodes.popleft()
+                    lst_successors.append(current.value)
+                last_node = current
+                in_order(current.right, queue_nodes)
 
-  
+        in_order(self.root, queue_nodes)
+        return list(zip(copy_queue, lst_successors))
+            
+    
+    def delete_node(self, root, value):
+        def process(current, value):
+            if current.value > value:
+                current.left = process(current.left, value)
+                return current
+            
+            if current.value < value:
+                current.right = process(current.right, value)
+                return current
+
+            # When we delete a node we have 3 cases:
+            # 1. Node dosn't have a child, then we just make its pointer points to None
+            if not current.left and not current.right:
+                return None
+            
+            # 2. Node have only one child, then we just replace it with this child
+            if not current.left:
+                return current.right
+
+            if not current.right:
+                return current.left
+            
+            # 3. Node have left and right, then replace it with its successor 
+            # then apply previous two methos on successor place
+            successor = self.get_successor(root, value) # get the successor
+            current.value = successor # replace values
+            current.right = process(current.right, successor) # replace right branch with new one
+            return current # return the current node to be replaced with old one
+        process(root, value)         
+            
+    # @staticmethod
+    # def is_degenerate(list_nodes):
+    #     prev = list_nodes.pop()
+    #     cur = list_nodes.pop()
+
+    #     left = False
+    #     right = False
+    #     for value in list_nodes:
+
 
         
 
@@ -149,4 +209,8 @@ for i in range(1, len(values)):
 # bst.get_maximum(bst.root)
 # bst.get_minmum(bst.root)
 
-print(bst.get_successor_v2(bst.root, -1))
+# bst.delete_node(bst.root, 3)
+# bst.in_order(bst.root)
+
+values = deque(sorted([3, -1, 5, 6]))
+print(bst.queries_of_successors(values))
