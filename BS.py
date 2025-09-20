@@ -45,6 +45,18 @@ class Binary_Search_Tree:
             self.in_order(root.left)
             print(root.value, end=' --> ')
             self.in_order(root.right)
+    
+    def pre_order(self, root):
+        if root:
+            print(root.value, end=' --> ')
+            self.pre_order(root.left)
+            self.pre_order(root.right)
+    
+    def post_order(self, root):
+        if root:
+            self.post_order(root.left)
+            self.post_order(root.right)
+            print(root.value, end=' --> ')
 
     def get_minmum(self, root):
         if root:
@@ -199,9 +211,9 @@ class Binary_Search_Tree:
 
 
 values = [3, 1, 5, -1, 6, -4, 0]
-bst = Binary_Search_Tree(Node(values[0]))
-for i in range(1, len(values)):
-    bst.insert(bst.root, values[i])
+# bst = Binary_Search_Tree(Node(values[0]))
+# for i in range(1, len(values)):
+#     bst.insert(bst.root, values[i])
 
 # bst.in_order(bst.root)
 # print()
@@ -212,5 +224,17 @@ for i in range(1, len(values)):
 # bst.delete_node(bst.root, 3)
 # bst.in_order(bst.root)
 
-values = deque(sorted([3, -1, 5, 6]))
-print(bst.queries_of_successors(values))
+# values = deque(sorted([3, -1, 5, 6]))
+# print(bst.queries_of_successors(values))
+
+tree = Binary_Search_Tree(Node(50))
+values = [20, 60, 15, 45, 70, 35, 73]
+for i in range(0, len(values)):
+    tree.insert(tree.root, values[i])
+
+tree.pre_order(tree.root)
+
+# tree2 = tree.get_tree_from_preorder(lst1.copy())
+# lst2 = tree2.preorder()
+
+# assert lst1 == lst2
