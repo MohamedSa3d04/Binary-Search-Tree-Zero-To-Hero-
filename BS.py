@@ -47,10 +47,18 @@ class Binary_Search_Tree:
             self.in_order(root.right)
     
     def pre_order(self, root):
-        if root:
-            print(root.value, end=' --> ')
-            self.pre_order(root.left)
-            self.pre_order(root.right)
+        nodes_lst = []
+
+        def process(current):
+            if not current:
+                return
+
+            nodes_lst.append(current.value)
+            process(current.left)
+            process(current.right)
+
+        process(root)
+        return nodes_lst
     
     def post_order(self, root):
         if root:
@@ -196,12 +204,69 @@ class Binary_Search_Tree:
             
     # @staticmethod
     # def is_degenerate(list_nodes):
-    #     prev = list_nodes.pop()
-    #     cur = list_nodes.pop()
+    #     if not list_nodes:
+    #         return True
+    #     if len(list_nodes) <= 2:
+    #         return True  # always degenerate with 0, 1, or 2 nodes
 
-    #     left = False
-    #     right = False
-    #     for value in list_nodes:
+    #     stk = [list_nodes[0]]
+    #     prim_direction = None
+
+    #     def right_or_left(parent, cur_value):
+    #         return 'l' if cur_value < parent else 'r'
+
+    #     for i in range(1, len(list_nodes)):
+    #         cur_value = list_nodes[i]
+    #         cur_dir = right_or_left(stk[-1], cur_value)
+
+    #         if prim_direction is None:
+    #             prim_direction = cur_dir
+    #         elif cur_dir != prim_direction:
+    #             return False
+
+    #         stk.append(cur_value)
+
+    #     return True
+
+    def build_tree_from_preorder(self, values):
+        # First soloution is the normal insert (O(n*h))
+
+        # Seconed is O(n^2): find the bigger from the cur_root O(n), split nodes > bigger , < bigger
+        def recursive_process(values):
+            #base case: if values is none, then no child
+            if len(values) == 0:
+                return None
+            
+            # we want to find the root and bigger
+            bigger_idx = None
+            cur_root = Node(values[0])
+            for idx in range(len(values)):
+                if values[idx] > cur_root.value:
+                    bigger_idx = values[idx]
+                    break
+            
+            if not bigger_idx:
+                left = values[1:bigger_idx]
+                cur_root.left = recursive_process(left)
+            else:
+                left = values[1:bigger_idx]
+                right = values[bigger_idx:]
+
+                cur_root.left = recursive_process(left)
+                cur_root.right = recursive_process(right)
+            return cur_root
+        return Binary_Search_Tree(recursive_process(values)) 
+
+            
+
+
+
+        
+
+            
+
+
+
 
 
         
@@ -227,14 +292,30 @@ values = [3, 1, 5, -1, 6, -4, 0]
 # values = deque(sorted([3, -1, 5, 6]))
 # print(bst.queries_of_successors(values))
 
-tree = Binary_Search_Tree(Node(50))
-values = [20, 60, 15, 45, 70, 35, 73]
-for i in range(0, len(values)):
-    tree.insert(tree.root, values[i])
+# tree = Binary_Search_Tree(Node(50))
+# values = [20, 60, 15, 45, 70, 35, 73]
+# for i in range(0, len(values)):
+#     tree.insert(tree.root, values[i])
 
-tree.pre_order(tree.root)
+# tree.pre_order(tree.root)
 
 # tree2 = tree.get_tree_from_preorder(lst1.copy())
 # lst2 = tree2.preorder()
 
 # assert lst1 == lst2
+
+tree = Binary_Search_Tree(Node(0))
+# print(tree.is_degenerate([100, 70, 101]))
+# print(tree.is_degenerate([100, 70, 60, 75]))
+# print(tree.is_degenerate([500, 400, 300, 200 , 250 , 275, 260]))
+
+
+tree = Binary_Search_Tree(Node(50))
+for value in [20, 70, 15, 45, 60, 73, 35]:
+    tree.insert(tree.root, value)
+
+lst1 = tree.pre_order(tree.root)
+tree2 = tree.build_tree_from_preorder(lst1.copy())
+lst2 = tree2.pre_order(tree.root)
+
+assert lst1 == lst2
