@@ -66,6 +66,18 @@ class Binary_Search_Tree:
             self.post_order(root.right)
             print(root.value, end=' --> ')
 
+    def level_traverse(self, root):
+        q = deque([root])
+        list_values = []
+        while q:
+            cur_node = q.popleft()
+            list_values.append(cur_node.value)
+            if cur_node.left:
+                q.append(cur_node.left)
+            
+            if cur_node.right:
+                q.append(cur_node.right)
+        return list_values
     def get_minmum(self, root):
         if root:
             if root.left:
@@ -231,7 +243,7 @@ class Binary_Search_Tree:
                         return False
                 else:# If we were going right but current direction is left,
                     # so current value must be bigger Than parent's previous node's value
-                    
+
                     if cur_value > stk[-2]:
                         prim_direction = 'f'
                     else:
@@ -243,7 +255,7 @@ class Binary_Search_Tree:
 
         return True
 
-    def build_tree_from_preorder(self, values):
+    def build_tree_from_preorder_v1(self, values):
         # First soloution is the normal insert (O(n*h))
 
         # Seconed is O(n^2): find the bigger from the cur_root O(n), split nodes > bigger , < bigger
@@ -271,6 +283,21 @@ class Binary_Search_Tree:
                 cur_root.right = recursive_process(right)
             return cur_root
         return Binary_Search_Tree(recursive_process(values)) 
+
+    def build_tree_from_preorder_v2(self, values):
+        nodes_deque = deque(values)
+        # Useing Min-Max Way
+        def recursive_process(min, max, nodes_deque):
+            if len(nodes_deque) == 0:
+                return None
+            cur_node = Node(nodes_deque.popleft())
+            if cur_node.value > max or cur_node.value < min:
+                return None
+            cur_node.left = recursive_process(min, cur_node.value, nodes_deque)
+            cur_node.right = recursive_process(cur_node.value, max, nodes_deque)
+            return cur_node
+
+        return Binary_Search_Tree(recursive_process(float('-inf'), float('inf'), nodes_deque))
 
             
 
@@ -319,18 +346,17 @@ values = [3, 1, 5, -1, 6, -4, 0]
 
 # assert lst1 == lst2
 
-tree = Binary_Search_Tree(Node(0))
-print(tree.is_degenerate([100, 70, 101]))
-print(tree.is_degenerate([100, 70, 60, 75]))
-print(tree.is_degenerate([500, 400, 300, 200 , 250 , 275, 245]))
+# tree = Binary_Search_Tree(Node(0))
+# print(tree.is_degenerate([100, 70, 101]))
+# print(tree.is_degenerate([100, 70, 60, 75]))
+# print(tree.is_degenerate([500, 400, 300, 200 , 250 , 275, 245]))
 
 
-# tree = Binary_Search_Tree(Node(50))
-# for value in [20, 70, 15, 45, 60, 73, 35]:
-#     tree.insert(tree.root, value)
-
-# lst1 = tree.pre_order(tree.root)
-# tree2 = tree.build_tree_from_preorder(lst1.copy())
-# lst2 = tree2.pre_order(tree.root)
-
-# assert lst1 == lst2
+tree = Binary_Search_Tree(Node(50))
+for value in [20, 60, 15, 45, 70, 35, 73]:
+    tree.insert(tree.root, value)
+level_list = tree.level_traverse(tree.root)
+lst1 = tree.pre_order(tree.root)
+tree2 = tree.build_tree_from_preorder_v2(lst1.copy())
+lst2 = tree2.pre_order(tree2.root)
+assert lst1 == lst2
