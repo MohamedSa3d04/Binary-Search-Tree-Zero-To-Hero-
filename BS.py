@@ -302,6 +302,30 @@ class Binary_Search_Tree:
 
         return Binary_Search_Tree(recursive_process(float('-inf'), float('inf'), nodes_deque))
 
+
+    def get_tree_from_traversal(self, nodes_deque):
+        def next_between(nodes_deque, mn, mx):
+            return nodes_deque and mn < nodes_deque[0] < mx
+
+        nodes_queue = deque()
+
+        tree = Binary_Search_Tree(Node(nodes_deque.popleft()))
+        nodes_queue.append([tree.root, float('-inf'), float('inf')])
+
+        while nodes_queue:
+            cur, mn, mx = nodes_queue.popleft()
+
+            if next_between(nodes_deque, mn, cur.value):
+                cur.left = Node(nodes_deque.popleft())
+                nodes_queue.append([cur.left, mn, cur.value])
+
+            if next_between(nodes_deque, cur.value, mx):
+                cur.right = Node(nodes_deque.popleft())
+                nodes_queue.append([cur.right, cur.value, mx])
+
+        return tree
+        
+
             
 
 
@@ -344,7 +368,8 @@ tree = Binary_Search_Tree(Node(50))
 for value in [20, 60, 15, 45, 70, 35, 73]:
     tree.insert(tree.root, value)
 level_list = tree.level_traverse(tree.root)
-tree2 = tree.build_tree_from_preorder_v2(level_list.copy())
+print(level_list)
+tree2 = tree.get_tree_from_traversal(deque(level_list.copy()))
 lst2 = tree2.level_traverse(tree2.root)
 print(lst2)
 assert level_list == lst2
