@@ -202,31 +202,46 @@ class Binary_Search_Tree:
             return current # return the current node to be replaced with old one
         process(root, value)         
             
-    # @staticmethod
-    # def is_degenerate(list_nodes):
-    #     if not list_nodes:
-    #         return True
-    #     if len(list_nodes) <= 2:
-    #         return True  # always degenerate with 0, 1, or 2 nodes
+    @staticmethod
+    def is_degenerate(list_nodes):
+        if not list_nodes:
+            return True
+        if len(list_nodes) <= 2:
+            return True  # always degenerate with 0, 1, or 2 nodes
 
-    #     stk = [list_nodes[0]]
-    #     prim_direction = None
+        stk = [list_nodes[0]]
+        prim_direction = None
 
-    #     def right_or_left(parent, cur_value):
-    #         return 'l' if cur_value < parent else 'r'
+        def right_or_left(parent, cur_value):
+            return 'l' if cur_value < parent else 'r'
 
-    #     for i in range(1, len(list_nodes)):
-    #         cur_value = list_nodes[i]
-    #         cur_dir = right_or_left(stk[-1], cur_value)
+        for i in range(1, len(list_nodes)): # Loop for all numbers except first
+            cur_value = list_nodes[i]
+            cur_dir = right_or_left(stk[-1], cur_value) # current direction (Left, right)
 
-    #         if prim_direction is None:
-    #             prim_direction = cur_dir
-    #         elif cur_dir != prim_direction:
-    #             return False
+            if prim_direction is None: # Primary Direction
+                prim_direction = cur_dir
+            elif cur_dir != prim_direction: # Zig-Zag State
+                if cur_dir == 'r': # If we were going left but current direction is right,
+                    # so current value must be less Than parent's previous node
 
-    #         stk.append(cur_value)
+                    if cur_value < stk[-2]:
+                        prim_direction = 'r'
+                    else:
+                        return False
+                else:# If we were going right but current direction is left,
+                    # so current value must be bigger Than parent's previous node's value
+                    
+                    if cur_value > stk[-2]:
+                        prim_direction = 'f'
+                    else:
+                        return False
 
-    #     return True
+
+
+            stk.append(cur_value)
+
+        return True
 
     def build_tree_from_preorder(self, values):
         # First soloution is the normal insert (O(n*h))
@@ -305,17 +320,17 @@ values = [3, 1, 5, -1, 6, -4, 0]
 # assert lst1 == lst2
 
 tree = Binary_Search_Tree(Node(0))
-# print(tree.is_degenerate([100, 70, 101]))
-# print(tree.is_degenerate([100, 70, 60, 75]))
-# print(tree.is_degenerate([500, 400, 300, 200 , 250 , 275, 260]))
+print(tree.is_degenerate([100, 70, 101]))
+print(tree.is_degenerate([100, 70, 60, 75]))
+print(tree.is_degenerate([500, 400, 300, 200 , 250 , 275, 245]))
 
 
-tree = Binary_Search_Tree(Node(50))
-for value in [20, 70, 15, 45, 60, 73, 35]:
-    tree.insert(tree.root, value)
+# tree = Binary_Search_Tree(Node(50))
+# for value in [20, 70, 15, 45, 60, 73, 35]:
+#     tree.insert(tree.root, value)
 
-lst1 = tree.pre_order(tree.root)
-tree2 = tree.build_tree_from_preorder(lst1.copy())
-lst2 = tree2.pre_order(tree.root)
+# lst1 = tree.pre_order(tree.root)
+# tree2 = tree.build_tree_from_preorder(lst1.copy())
+# lst2 = tree2.pre_order(tree.root)
 
-assert lst1 == lst2
+# assert lst1 == lst2
