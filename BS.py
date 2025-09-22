@@ -8,8 +8,11 @@ class Node:
         self.parent = None # Excellent utility for successor finding
 
 class Binary_Search_Tree:
-    def __init__(self, root:Node):
-        self.root = root
+    def __init__(self, values):
+        self.root = Node(values[0])
+        for i in range(1, len(values)):
+            self.insert(self.root, values[i])
+
     
     def insert(self, root, value): #5
         if root:
@@ -90,9 +93,9 @@ class Binary_Search_Tree:
     def get_maximum(self, root):
         if root:
             if root.right:
-                self.get_maximum(root.right)
+                return self.get_maximum(root.right)
             else:
-                print(root.value)
+                return root.value
 
 
     ## Following codes is to get the successor:
@@ -119,7 +122,7 @@ class Binary_Search_Tree:
         
         node = chain_list.pop()
 
-        if not chain_list and root.value != value:
+        if not chain_list and root.value != value: #handling the case if the we wanna root's succesoor
             return None
 
         
@@ -142,7 +145,7 @@ class Binary_Search_Tree:
         if not parent: # Our ancestor is the root
             return None
         
-        return parent.value # Even is our parent if we in the left, or our ancestor's parent if we right 
+        return parent.value # Even it is our parent if we in the left, or our ancestor's parent if we right 
 
     ## Soloution for parent link
     def get_successor_v2(self, root, value):
@@ -163,6 +166,24 @@ class Binary_Search_Tree:
             
             return parent_node.value
 
+    def get_desuccessor(self, root, value):
+        node = self.search(root, value)
+        if node.left: # Case1: node has left
+            return self.get_maximum(node.left)
+        
+        parent = node.parent
+        cur_node = node
+        while parent and parent.left == cur_node: #Keep backtrack tell we reach at the zigzag state
+            # if we're in a left chain and our ancestor is in the right of his parent then our ancestor's parent is the decessor (Case 3)
+            # or we're in a right chain so my parent is the decessor (Case 3 too)
+            cur_node = parent
+            parent = parent.parent
+        
+        if not parent: # Case 2: even we're in a left chain witout ancestor's parent exist
+                        #  Or our root is the value without left chain  
+            None
+
+        return parent.value # Case 3
 
     def queries_of_successors(self, queue_nodes:deque):  
         copy_queue = queue_nodes.copy()
@@ -330,6 +351,5 @@ class Binary_Search_Tree:
 
 
 values = [3, 1, 5, -1, 6, -4, 0]
-# bst = Binary_Search_Tree(Node(values[0]))
-# for i in range(1, len(values)):
-#     bst.insert(bst.root, values[i])
+bst = Binary_Search_Tree(values)
+print(bst.get_desuccessor(bst.root, 5))
