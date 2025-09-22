@@ -303,7 +303,7 @@ class Binary_Search_Tree:
         return Binary_Search_Tree(recursive_process(float('-inf'), float('inf'), nodes_deque))
 
 
-    def get_tree_from_traversal(self, nodes_deque):
+    def get_tree_from_traversal_levelorder(self, nodes_deque):
         def next_between(nodes_deque, mn, mx):
             return nodes_deque and mn < nodes_deque[0] < mx
 
@@ -313,13 +313,13 @@ class Binary_Search_Tree:
         nodes_queue.append([tree.root, float('-inf'), float('inf')])
 
         while nodes_queue:
-            cur, mn, mx = nodes_queue.popleft()
+            cur, mn, mx = nodes_queue.popleft() 
 
-            if next_between(nodes_deque, mn, cur.value):
+            if next_between(nodes_deque, mn, cur.value): #Check for left
                 cur.left = Node(nodes_deque.popleft())
                 nodes_queue.append([cur.left, mn, cur.value])
 
-            if next_between(nodes_deque, cur.value, mx):
+            if next_between(nodes_deque, cur.value, mx): #Check for right
                 cur.right = Node(nodes_deque.popleft())
                 nodes_queue.append([cur.right, cur.value, mx])
 
@@ -333,43 +333,3 @@ values = [3, 1, 5, -1, 6, -4, 0]
 # bst = Binary_Search_Tree(Node(values[0]))
 # for i in range(1, len(values)):
 #     bst.insert(bst.root, values[i])
-
-# bst.in_order(bst.root)
-# print()
-# print(bst.search(bst.root, -4))
-# bst.get_maximum(bst.root)
-# bst.get_minmum(bst.root)
-
-# bst.delete_node(bst.root, 3)
-# bst.in_order(bst.root)
-
-# values = deque(sorted([3, -1, 5, 6]))
-# print(bst.queries_of_successors(values))
-
-# tree = Binary_Search_Tree(Node(50))
-# values = [20, 60, 15, 45, 70, 35, 73]
-# for i in range(0, len(values)):
-#     tree.insert(tree.root, values[i])
-
-# tree.pre_order(tree.root)
-
-# tree2 = tree.get_tree_from_preorder(lst1.copy())
-# lst2 = tree2.preorder()
-
-# assert lst1 == lst2
-
-# tree = Binary_Search_Tree(Node(0))
-# print(tree.is_degenerate([100, 70, 101]))
-# print(tree.is_degenerate([100, 70, 60, 75]))
-# print(tree.is_degenerate([500, 400, 300, 200 , 250 , 275, 245]))
-
-
-tree = Binary_Search_Tree(Node(50))
-for value in [20, 60, 15, 45, 70, 35, 73]:
-    tree.insert(tree.root, value)
-level_list = tree.level_traverse(tree.root)
-print(level_list)
-tree2 = tree.get_tree_from_traversal(deque(level_list.copy()))
-lst2 = tree2.level_traverse(tree2.root)
-print(lst2)
-assert level_list == lst2
