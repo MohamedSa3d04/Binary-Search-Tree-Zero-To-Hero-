@@ -206,7 +206,7 @@ class Binary_Search_Tree:
         return list(zip(copy_queue, lst_successors))
             
     
-    def delete_node(self, root, value):
+    def delete_node_with_seccossor(self, root, value):
         def process(current, value):
             if current.value > value:
                 current.left = process(current.left, value)
@@ -230,9 +230,18 @@ class Binary_Search_Tree:
             
             # 3. Node have left and right, then replace it with its successor 
             # then apply previous two methos on successor place
-            successor = self.get_successor(root, value) # get the successor
+            successor = self.get_successor(current.right, value) # get the successor
             current.value = successor # replace values
-            current.right = process(current.right, successor) # replace right branch with new one
+            # current.right = process(current.right, successor) # replace right branch with new one
+            
+            # If we want to remove the successor without another recursion, Just find it and connect it's parent to his right
+            # As we saw befre, successor is the min of the right and doesn't have left node
+            child = current.right # 
+            parent = current
+            while child.left:
+                child = child.left
+                parent = child
+            parent.left = child.right #Even None or Another subtree
             return current # return the current node to be replaced with old one
         process(root, value)         
             
@@ -262,7 +271,7 @@ class Binary_Search_Tree:
             
             # 3. Node have left and right, then replace it with its successor 
             # then apply previous two methos on successor place
-            successor = self.get_desuccessor(root, value) # get the successor
+            successor = self.get_desuccessor(current.left, value) # get the successor
             current.value = successor # replace values
             current.left = process(current.left, successor) # replace right branch with new one
             return current # return the current node to be replaced with old one
@@ -386,7 +395,7 @@ class Binary_Search_Tree:
 values = [3, 1, 5, -1, 6, -4, 0]
 bst = Binary_Search_Tree(values)
 print(bst.level_traverse(bst.root))
-bst.delete_node_with_deseccossor(bst.root, 6)
+bst.delete_node_with_seccossor(bst.root, 6)
 print(bst.level_traverse(bst.root))
 # print(bst.get_desuccessor(bst.root, 5))
 
