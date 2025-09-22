@@ -236,6 +236,39 @@ class Binary_Search_Tree:
             return current # return the current node to be replaced with old one
         process(root, value)         
             
+    
+    
+    def delete_node_with_deseccossor(self, root, value):
+        def process(current, value):
+            if current.value > value:
+                current.left = process(current.left, value)
+                return current
+            
+            if current.value < value:
+                current.right = process(current.right, value)
+                return current
+
+            # When we delete a node we have 3 cases:
+            # 1. Node dosn't have a child, then we just make its pointer points to None
+            if not current.left and not current.right:
+                return None
+            
+            # 2. Node have only one child, then we just replace it with this child
+            if not current.left:
+                return current.right
+
+            if not current.right:
+                return current.left
+            
+            # 3. Node have left and right, then replace it with its successor 
+            # then apply previous two methos on successor place
+            successor = self.get_desuccessor(root, value) # get the successor
+            current.value = successor # replace values
+            current.left = process(current.left, successor) # replace right branch with new one
+            return current # return the current node to be replaced with old one
+        process(root, value)         
+            
+    
     @staticmethod
     def is_degenerate(list_nodes):
         if not list_nodes:
@@ -352,4 +385,8 @@ class Binary_Search_Tree:
 
 values = [3, 1, 5, -1, 6, -4, 0]
 bst = Binary_Search_Tree(values)
-print(bst.get_desuccessor(bst.root, 5))
+print(bst.level_traverse(bst.root))
+bst.delete_node_with_deseccossor(bst.root, 6)
+print(bst.level_traverse(bst.root))
+# print(bst.get_desuccessor(bst.root, 5))
+
